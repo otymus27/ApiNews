@@ -1,0 +1,26 @@
+{
+  "name": "appblog",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "dev": "nodemon --no-warnings server.js"
+    
+  },
+  "author": "Fábio Rocha",
+  "license": "ISC",
+  "description": "API para SPA Noticias",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.10.2",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
