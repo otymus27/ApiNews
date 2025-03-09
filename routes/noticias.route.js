@@ -5,38 +5,42 @@ import autenticacao from '../middleware/autenticacao.middleware.js';
 
 const router = express.Router();
 
-// Rota para criar registro
-router.post("/", autenticacao, noticiasControle.create);
 
+// Rotas livres - não precisa de autenticação
 // Rota para listar registros
 router.get("/", noticiasControle.listar);
 
-// Rota diferencia para listar primeiro item de uma lista destaque
+// Rota especifica para listar primeiro item de uma lista destaque
 router.get("/top", noticiasControle.topNews);
 
 // Rota para buscar registros pelo titulo
 router.get("/search", noticiasControle.buscarPorTitulo);
 
+// Rotas protegidas - precisa de autenticação e token
+router.use(autenticacao);
+// Rota para criar registro
+router.post("/", noticiasControle.create);
+
 // Rota para buscar noticias por usuário
-router.get("/:noticiasPorUsuario",autenticacao, noticiasControle.buscarNoticiasPorUsuario);
+router.get("/:noticiasPorUsuario", noticiasControle.buscarNoticiasPorUsuario);
 
 // Rota para buscar registros por id
-router.get("/:id",autenticacao, validId,validUser,noticiasControle.buscarPorId);
+router.get("/:id", validId, noticiasControle.buscarPorId);
 
 // Rota para atualizar um registro por id
-router.patch("/:id", autenticacao, validId, validNoticia, noticiasControle.editar);
+router.patch("/:id", validId, validNoticia, noticiasControle.editar);
 
 // Rota para excluir registro por id com autenticação
-router.delete("/:id", autenticacao, validId, validNoticia, noticiasControle.excluir);
+router.delete("/:id",  validId, validNoticia, noticiasControle.excluir);
 
 // Rota para dar likes ou deslikes 
-router.patch("/likes/:id", autenticacao, validId, validNoticia, noticiasControle.inserirLikes);
+router.patch("/likes/:id",  validId, validNoticia, noticiasControle.inserirLikes);
 
 // Rota para adicionar comentarios
-router.patch("/comentarios/:id", autenticacao, validNoticia, noticiasControle.inserirComentario);
+router.patch("/comentarios/:id", validNoticia, noticiasControle.inserirComentario);
 
 // Rota para excluir comentarios mandando dois parametros
-router.patch("/comentarios/:idNoticia/:idComentario", autenticacao, noticiasControle.excluirComentario);
+router.patch("/comentarios/:idNoticia/:idComentario", noticiasControle.excluirComentario);
 
 
 

@@ -34,7 +34,7 @@ const editar = (id, titulo, texto, banner) => Noticias.findOneAndUpdate(
 );
 
 // Funçao para fazer delete de registros
-const excluir = (id) => Noticias.findByIdAndDelete(id);
+const excluir = (id) => Noticias.findOneAndDelete({ _id: id });
 
 // Função para inserir likes na noticia
 const inserirLikes = (id,userId) => Noticias.findOneAndUpdate(
