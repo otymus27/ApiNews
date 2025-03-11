@@ -1,21 +1,22 @@
 // Importar módulo responsável pela comunicação com o banco de dados
+import mongoose from "mongoose";
 import UserService from "../services/UserService.js";
 
 // Função para cadastrar registros
 const create = async (req, res) => {
-     //Receber os dados de um formulário através do body
-     const body = req.body;
+     // Aqui recebendo os campos desmembrados do body
+     const {nome, login, senha, email, foto, background } = req.body;
 
      //Aqui envolvemos tudo que não depende do javascript
      try { 
           // Aqui chamamos o service para cadastrar o registro no banco de dados
-          const user = await UserService.create(body);
+          const token = await UserService.create({nome, login, senha, email, foto, background });
        
           // Resposta para o cliente um objeto user
-          return res.status(201).send(user);
+          return res.status(201).send(token);
 
      } catch (error) {
-          res.status(500).send(error.message);
+          res.status(500).send("Algo de errado: "+error.message);
      }
 
 }
@@ -38,19 +39,19 @@ const listar = async (req, res) => {
 
 // Função para buscar registros por ID
 const buscarPorId = async (req, res) => {
-     const {id: userId} = req.params;
-     //aqui pegamos o id do usuario logado
-     const userIdLogged = req.userId;
+     // const {id: userId} = req.params;
+     // //aqui pegamos o id do usuario logado
+     // const userIdLogged = req.userId;
 
      try {       
 
           // Variável para receber o registro vindo do banco de dados, além de passarmos o parâmetro para função 
-          const user = await UserService.buscarPorId(userId, userIdLogged);
+          const user = await UserService.buscarPorId(req.params.id, req.userId);
 
           // Resposta para o cliente
-          return res.status(200).send(user);
+          return res.send(user);
      } catch (error) {
-          return res.status(400).send(e.message);
+          return res.status(400).send("erro ao buscar por id "+error.message);
      }
 
 }
@@ -77,24 +78,26 @@ const excluir = async (req, res) => {
           // Resposta para o cliente
           res.status(200).send(user);
      } catch (error) {
-          return res.status(400).send(e.message);
+          return res.status(400).send("Ops"+error.message);
      }
 
 }
 
 // Função para editar registros
-const editar = async (req, res) => {
-     const body = req.body;
-     const userId = req.userId;
+const editar = async (req, res) => {       
+
+     const { nome, login, email, senha, foto, background } = req.body;
+     const { id: userId } = req.params;
+     const userIdLogged = req.userId;
 
      try {          
           // Aqui chamamos o service para atualizar o registro no banco de dados, passando o id e os dados que vem do body
-          await UserService.editar(body,userId);
+          const response = await UserService.editar({ nome, login, email, senha, foto, background },userId, userIdLogged);
 
           // Resposta para o cliente
           return res.send(response);
      } catch (error) {
-          res.status(400).send(e.message);
+          res.status(400).send(error.message);
      }
 
 }

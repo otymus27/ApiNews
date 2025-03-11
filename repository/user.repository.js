@@ -1,10 +1,10 @@
 import User from "../models/User.js";
 
-const create = (body) => User.create(body);
+const create = (nome, login, email, senha, foto, background) => User.create({ nome, login, email, senha, foto, background });
 
 const listar = () => User.find();
 
-const buscarPorId = (id) => User.findById(id);
+const buscarPorId = (idUser) => User.findById(idUser);
 
 const buscarPorEmail = (email) => User.findOne({ email: email });
 
@@ -12,10 +12,10 @@ const buscarPorLogin = (login) => User.findOne({ login: login });
 
 const excluir = (id) => User.findByIdAndDelete(id);
 
-const editar = (id,body) =>
+const editar = ( id, nome, login, email, senha, foto, background ) =>
   User.findOneAndUpdate(
     { _id: id },
-    { body },
+    { id, nome, login, email, senha, foto, background },
     { rawResult: true }
   );
 

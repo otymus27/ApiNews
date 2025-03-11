@@ -5,62 +5,64 @@ import loginService from "../services/LoginService.js";
 import bcrypt from "bcrypt";
 
 // Função para cadastrar registros recebendo os dados através do body
-const create = async (body) => {
-     // Aqui desmembrando os campos de body
-     const {nome, login, senha, email, foto, background } = body;
+const create = async ({ nome, login, senha, email, foto, background }) => {
+  // Validar dados
+  if (!nome || !login || !senha || !email || !foto || !background)
+    throw new Error("Preencha todos os campos!");
 
-     // Validar dados
-     if (!nome || !login || !senha || !email || !foto || !background)
-     throw new Error("Preencha todos os campos!");
-    
+  // Aqui fazemos verificação se já existe registro com esse nome
+  const buscar = await UserRepository.buscarPorEmail(email);
 
-     // Aqui fazemos verificação se já existe registro com esse nome
-     const buscar = await UserRepository.buscarPorEmail(email);
+  if (buscar) throw new Error("Email já cadastrado!");
 
-     if (buscar) throw new Error("Email já cadastrado!");
+  // Aqui chamamos o service para cadastrar o registro no banco de dados
+  const user = await UserRepository.create({
+    nome,
+    login,
+    senha,
+    email,
+    foto,
+    background,
+  });
 
-     // Aqui chamamos o service para cadastrar o registro no banco de dados
-     const user = await UserRepository.create(body);
+  if (!user) throw new Error("Erro ao criar registro!");
 
-     if (!user) throw new Error("Erro ao cadaErro ao criar registro!");
+  // Aqui criamos o token
+  const token = loginService.generateToken(user.id);
 
-     // Aqui criamos o token
-     const token = loginService.generateToken(user.id);    
-
-     // Resposta o objeto para o cliente
-     return {
-     user: {
-          id: user._id,
-          nome,
-          login,
-          senha,
-          email,
-          foto,
-          background,
-     },
-     token,
-     };
+  // Resposta o objeto para o cliente, vamos enviar apenas o token, como boa prática não vamos enviar os dados do usuario
+  return {
+    //  user: {
+    //       id: user._id,
+    //       nome,
+    //       login,
+    //       senha,
+    //       email,
+    //       foto,
+    //       background,
+    //  },
+    token,
+  };
 };
 
 // Função para leitura de registros
-const listar = async (req, res) => { 
-    // Variável para receber um conjunto de registros ou array
-    const users = await UserRepository.listar();
+const listar = async (req, res) => {
+  // Variável para receber um conjunto de registros ou array
+  const users = await UserRepository.listar();
 
-    if (users.length === 0) throw new Error("nenhum registro encontrado!");
+  if (users.length === 0) throw new Error("nenhum registro encontrado!");
 
-    // Resposta para o cliente
-    return users;
-  
+  // Resposta para o cliente
+  return users;
 };
 
 // Função para buscar registros por ID
-const buscarPorId = async (userId, userIdLogged) => {
+const buscarPorId = async (userIdParam, userIdLogged) => {
   let idParam;
-  if (!userId) {
+  if (!userIdParam) {
     idParam = userIdLogged;
   } else {
-    idParam = userId;
+    idParam = userIdParam;
   }
 
   if (!idParam) throw new Error("Id inválido!");
@@ -99,29 +101,27 @@ const excluir = async (req, res) => {
 };
 
 // Função para cadastrar registros
-const editar = async (body, userId) => { 
-    // Aqui desconstruimos o body
-    const { nome, login, senha, email, foto, background } = body;
+const editar = async ({ nome, login, email, senha, foto, background }, userId, userIdLogged) => {
+  
+  // Validar dados
+  if (!nome && !login && !senha && !email && !foto && !background)
+    throw new Error("Preencha todos os campos!");
 
-    // Validar dados
-    if (!nome && !login && !senha && !email && !foto && !background)
-      throw new Error("Preencha todos os campos!");
+  // Aqui chamamos o repository para buscarPorId o registro no banco de dados, passando o id
+  const user = await UserRepository.buscarPorId(userId);
 
-    // Aqui chamamos o repository para buscarPorId o registro no banco de dados, passando o id
-    const user = await UserRepository.buscarPorId(id);
+  // Verificar se o usuário pode fazer a alteração
+  if (user._id != userIdLogged) throw new Error("Você não tem permissão para fazer esta atualização!");
 
-    // Verificar se id existe
-    if(user._id != userId) throw new Error("Id inválido!");
+  if (senha) {
+    senha = await bcrypt.hash(senha, 10);
+  }
 
-    if (senha) {
-          senha = await bcrypt.hash(senha, 10);
-    }
+  // Aqui chamamos o repository para atualizar o registro no banco de dados, passando o id e os dados
+  await UserRepository.editar(userId, nome, login, senha, email, foto, background );
 
-    // Aqui chamamos o repository para atualizar o registro no banco de dados, passando o id e os dados
-    await UserRepository.editar(body);
-
-    // Resposta para o cliente
-    return res.status(200).send({ message: "Registro atualizado com sucesso!" });
-  } 
+  // Resposta para o cliente
+  return ({ message: "Registro atualizado com sucesso!" });
+};
 
 export default { create, listar, buscarPorId, excluir, editar };
