@@ -33,18 +33,8 @@ const create = async ({ nome, login, senha, email, foto, background }) => {
   const token = loginService.generateToken(user.id);
 
   // Resposta o objeto para o cliente, vamos enviar apenas o token, como boa prática não vamos enviar os dados do usuario
-  return {
-    //  user: {
-    //       id: user._id,
-    //       nome,
-    //       login,
-    //       senha,
-    //       email,
-    //       foto,
-    //       background,
-    //  },
-    token,
-  };
+  return token;
+  
 };
 
 // Função para leitura de registros
@@ -62,7 +52,8 @@ const listar = async (req, res) => {
 const buscarPorId = async (userIdParam, userIdLogged) => {
   let idParam;
   if (!userIdParam) {
-    idParam = userIdLogged;
+    userIdParam = userIdLogged
+    idParam = userIdParam;
   } else {
     idParam = userIdParam;
   }
@@ -71,6 +62,8 @@ const buscarPorId = async (userIdParam, userIdLogged) => {
 
   // Variável para receber o registro vindo do banco de dados, além de passarmos o parâmetro para função
   const user = await UserRepository.buscarPorId(idParam);
+
+  if (!user) throw new Error("Usuário não foi encontrado!!!");
 
   // Resposta para o cliente
   return user;

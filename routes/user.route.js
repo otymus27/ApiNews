@@ -17,7 +17,7 @@ userRouter.get("/", userControle.listar);
 userRouter.use(validId);
 
 // Rota para buscar registros por id
-userRouter.get("/buscarPorId/:id", userControle.buscarPorId);
+userRouter.get("/buscarPorId/:id?", userControle.buscarPorId);
 
 // Rota para excluir registro por id
 userRouter.delete("/:id", userControle.excluir);

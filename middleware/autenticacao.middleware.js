@@ -45,7 +45,7 @@ function verificarToken(req, res, next) {
       }
 
       req.userId = user.id;
-      req.userNome = decoded.nome;
+     
       return next();
     });
     

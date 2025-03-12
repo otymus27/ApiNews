@@ -41,10 +41,7 @@ const listar = async (req, res) => {
 
 // Função para buscar registros por ID
 const buscarPorId = async (req, res) => {
-     // const {id: userId} = req.params;
-     // //aqui pegamos o id do usuario logado
-     // const userIdLogged = req.userId;
-
+     
      try {       
 
           // Variável para receber o registro vindo do banco de dados, além de passarmos o parâmetro para função 
