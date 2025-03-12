@@ -6,14 +6,16 @@ import UserService from "../services/UserService.js";
 const create = async (req, res) => {
      // Aqui recebendo os campos desmembrados do body
      const {nome, login, senha, email, foto, background } = req.body;
+     //console.log({nome, login, senha, email, foto, background })
 
      //Aqui envolvemos tudo que não depende do javascript
      try { 
           // Aqui chamamos o service para cadastrar o registro no banco de dados
           const token = await UserService.create({nome, login, senha, email, foto, background });
        
+          console.log(token)
           // Resposta para o cliente um objeto user
-          return res.status(201).send(token);
+          res.status(201).send(token);
 
      } catch (error) {
           res.status(500).send("Algo de errado: "+error.message);

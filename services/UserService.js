@@ -1,3 +1,4 @@
+import nodemon from "nodemon";
 import UserRepository from "../repository/user.repository.js";
 
 import loginService from "../services/LoginService.js";
@@ -6,7 +7,8 @@ import bcrypt from "bcrypt";
 
 // Função para cadastrar registros recebendo os dados através do body
 const create = async ({ nome, login, senha, email, foto, background }) => {
-  // Validar dados
+  //console.log({nome, login, senha, email, foto, background })
+  // Validar dados 
   if (!nome || !login || !senha || !email || !foto || !background)
     throw new Error("Preencha todos os campos!");
 
@@ -16,14 +18,14 @@ const create = async ({ nome, login, senha, email, foto, background }) => {
   if (buscar) throw new Error("Email já cadastrado!");
 
   // Aqui chamamos o service para cadastrar o registro no banco de dados
-  const user = await UserRepository.create({
+  const user = await UserRepository.create(
     nome,
     login,
-    senha,
     email,
+    senha,
     foto,
     background,
-  });
+  );
 
   if (!user) throw new Error("Erro ao criar registro!");
 
