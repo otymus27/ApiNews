@@ -25,7 +25,7 @@ router.post("/", noticiasControle.create);
 router.get("/:noticiasPorUsuario", noticiasControle.buscarNoticiasPorUsuario);
 
 // Rota para buscar registros por id
-router.get("/:id", validId, noticiasControle.buscarPorId);
+router.get("/buscarPorId/:id", validId, noticiasControle.buscarPorId);
 
 // Rota para atualizar um registro por id
 router.patch("/:id", validId, validNoticia, noticiasControle.editar);

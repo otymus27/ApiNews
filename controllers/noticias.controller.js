@@ -73,8 +73,7 @@ const buscarPorTitulo = async (req, res) => {
 // Função para buscar registros por ID
 const buscarPorId = async (req, res) => {
      // Aqui passamos o parâmetro para rota
-     const id  = req.params.id;
-    
+     const { id } = req.params;
      console.log(id)
      try {        
 
