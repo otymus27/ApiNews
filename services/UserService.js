@@ -99,7 +99,7 @@ const excluir = async (req, res) => {
 const editar = async ({ nome, login, email, senha, foto, background }, userId, userIdLogged) => {
   
   // Validar dados
-  if (!nome && !login && !senha && !email && !foto && !background)
+  if (!nome && !login && !email && !senha && !foto && !background)
     throw new Error("Preencha todos os campos!");
 
   // Aqui chamamos o repository para buscarPorId o registro no banco de dados, passando o id
@@ -113,7 +113,7 @@ const editar = async ({ nome, login, email, senha, foto, background }, userId, u
   }
 
   // Aqui chamamos o repository para atualizar o registro no banco de dados, passando o id e os dados
-  await UserRepository.editar(userId, nome, login, senha, email, foto, background );
+  await UserRepository.editar(userId, nome, login, email, senha, foto, background );
 
   // Resposta para o cliente
   return ({ message: "Registro atualizado com sucesso!" });
